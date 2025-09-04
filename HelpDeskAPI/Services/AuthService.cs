@@ -12,10 +12,11 @@ public class AuthService
         _configuration = configuration;
     }
 
-    public string GenerateToken(string username, string role)
+    public string GenerateToken(int id, string username, string role)
     {
         var claims = new[]
         {
+            new Claim("id", id.ToString()),
             new Claim(ClaimTypes.Name, username),
             new Claim(ClaimTypes.Role, role)
         };

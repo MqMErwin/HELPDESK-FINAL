@@ -125,7 +125,7 @@ export default function UserDashboard({ onLogout, token, role }) {
             <TicketForm token={token} onCreated={() => setActiveMenu('tickets')} />
           )}
           {activeMenu === 'tickets' && (
-            <TicketList token={token} role="Solicitante" />
+            <TicketList token={token} role={role} />
           )}
         </main>
       </div>
