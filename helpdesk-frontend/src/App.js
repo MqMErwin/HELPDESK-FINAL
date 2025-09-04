@@ -7,9 +7,28 @@ import TechnicianDashboard from './components/TechnicianDashboard';
 import UserDashboard from './components/UserDashboard';
 import './App.css';
 
+// Extrae el ID de usuario desde un JWT sin validarlo en el cliente
+function getUserIdFromToken(token) {
+  if (!token) return null;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return (
+      payload['nameid'] ||
+      payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] ||
+      payload['sub'] ||
+      null
+    );
+  } catch (e) {
+    return null;
+  }
+}
+
 function App() {
   const [token, setToken] = useState(localStorage.getItem('token') || null);
   const [rol, setRol] = useState(localStorage.getItem('rol') || null);
+  const [userId, setUserId] = useState(
+    localStorage.getItem('userId') || getUserIdFromToken(localStorage.getItem('token'))
+  );
   const [showRegister, setShowRegister] = useState(false);
   const validRoles = ['Solicitante', 'Tecnico', 'Administrador'];
 
@@ -17,15 +36,19 @@ function App() {
     const normalizedRole = rol
       ? rol.charAt(0).toUpperCase() + rol.slice(1).toLowerCase()
       : '';
+    const id = getUserIdFromToken(token);
     setToken(token);
     setRol(normalizedRole);
+    setUserId(id);
     localStorage.setItem('token', token);
     localStorage.setItem('rol', normalizedRole);
+    if (id) localStorage.setItem('userId', id);
   };
 
   const handleLogout = () => {
     setToken(null);
     setRol(null);
+    setUserId(null);
     localStorage.clear();
   };
 
@@ -37,7 +60,7 @@ function App() {
         ) : (
           <Login onLogin={handleLogin} onShowRegister={() => setShowRegister(true)} />
         )}
-        <ChatBotWidget />
+        <ChatBotWidget userId={userId} />
       </div>
     );
   }
@@ -58,7 +81,7 @@ function App() {
   return (
     <>
       {renderDashboard()}
-      <ChatBotWidget />
+      <ChatBotWidget userId={userId} />
     </>
   );
 }
