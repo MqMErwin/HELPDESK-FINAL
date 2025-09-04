@@ -5,6 +5,7 @@ import {
   FiUsers,
   FiPieChart,
   FiMessageSquare,
+  FiPlusCircle,
   FiLogOut,
   FiBell,
   FiHome,
@@ -13,6 +14,7 @@ import {
   FiX
 } from 'react-icons/fi';
 import TicketTable from './TicketTable';
+import TicketForm from './TicketForm';
 import UserManagement from './UserManagement';
 
 export default function AdminDashboard({ onLogout, token, role }) {
@@ -124,6 +126,12 @@ export default function AdminDashboard({ onLogout, token, role }) {
                 <button type="button" onClick={() => setActiveMenu('ticket-list')}>
                   <FiMessageSquare className="icon" />
                   <span>Lista de Tickets</span>
+                </button>
+              </li>
+              <li className={activeMenu === 'ticket-create' ? 'active' : ''}>
+                <button type="button" onClick={() => setActiveMenu('ticket-create')}>
+                  <FiPlusCircle className="icon" />
+                  <span>Crear Tickets</span>
                 </button>
               </li>
               <li className={activeMenu === 'users' ? 'active' : ''}>
@@ -267,6 +275,12 @@ export default function AdminDashboard({ onLogout, token, role }) {
           )}
           {activeMenu === 'ticket-list' && (
             <TicketTable token={token} />
+          )}
+          {activeMenu === 'ticket-create' && (
+            <div>
+              <h3>Crear Tickets</h3>
+              <TicketForm token={token} />
+            </div>
           )}
           {activeMenu === 'users' && (<UserManagement token={token} />)}
           {activeMenu === 'settings' && (
