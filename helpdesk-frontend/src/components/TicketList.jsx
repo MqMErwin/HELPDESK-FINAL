@@ -89,31 +89,35 @@ function TicketList({ token, role }) {
     <div>
       <h2>Tickets</h2>
       {role === 'Administrador' && <TicketForm token={token} onCreated={fetchTickets} />}
-      <ul>
-        {tickets.map(ticket => (
-          <li key={ticket.id} style={{ marginBottom: '1em' }}>
-            <strong>#{ticket.id} {ticket.titulo}</strong> - {ticket.estado}
-            <p>{ticket.descripcion}</p>
-            {role === 'Administrador' && (
-              <>
-                <button onClick={() => handleAssign(ticket.id)}>Asignar</button>
-                <button onClick={() => handleEdit(ticket)}>Editar</button>
-                <button onClick={() => handleDelete(ticket.id)}>Eliminar</button>
-              </>
-            )}
-            {role === 'Tecnico' && (
-              <select
-                value={ticket.estado}
-                onChange={(e) => handleStatusChange(ticket.id, e.target.value)}
-              >
-                {estados.map(e => (
-                  <option key={e.value} value={e.value}>{e.label}</option>
-                ))}
-              </select>
-            )}
-          </li>
-        ))}
-      </ul>
+      {tickets.length === 0 ? (
+        <p>No tienes tickets registrados.</p>
+      ) : (
+        <ul>
+          {tickets.map(ticket => (
+            <li key={ticket.id} style={{ marginBottom: '1em' }}>
+              <strong>#{ticket.id} {ticket.titulo}</strong> - {ticket.estado}
+              <p>{ticket.descripcion}</p>
+              {role === 'Administrador' && (
+                <>
+                  <button onClick={() => handleAssign(ticket.id)}>Asignar</button>
+                  <button onClick={() => handleEdit(ticket)}>Editar</button>
+                  <button onClick={() => handleDelete(ticket.id)}>Eliminar</button>
+                </>
+              )}
+              {role === 'Tecnico' && (
+                <select
+                  value={ticket.estado}
+                  onChange={(e) => handleStatusChange(ticket.id, e.target.value)}
+                >
+                  {estados.map(e => (
+                    <option key={e.value} value={e.value}>{e.label}</option>
+                  ))}
+                </select>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './ChatBotWidget.css';
 
-export default function ChatBotWidget() {
+export default function ChatBotWidget({ userId }) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState(null);
   const [messages, setMessages] = useState([
@@ -33,7 +33,9 @@ export default function ChatBotWidget() {
   ]);
   const [newMessage, setNewMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [sessionId] = useState('user_' + Math.random().toString(36).substr(2, 9));
+  const [sessionId] = useState(() =>
+    userId ? String(userId) : 'guest_' + Math.random().toString(36).substr(2, 9)
+  );
   const messagesEndRef = useRef(null);
 
   const RASA_ENDPOINT = 'http://localhost:5005/webhooks/rest/webhook';
