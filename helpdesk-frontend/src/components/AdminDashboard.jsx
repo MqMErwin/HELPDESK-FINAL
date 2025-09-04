@@ -12,7 +12,7 @@ import {
   FiMenu,
   FiX
 } from 'react-icons/fi';
-import TicketList from './TicketList';
+import TicketTable from './TicketTable';
 import UserManagement from './UserManagement';
 
 export default function AdminDashboard({ onLogout, token, role }) {
@@ -266,7 +266,7 @@ export default function AdminDashboard({ onLogout, token, role }) {
             </>
           )}
           {activeMenu === 'ticket-list' && (
-            <TicketList token={token} role={role} />
+            <TicketTable token={token} />
           )}
           {activeMenu === 'users' && (<UserManagement token={token} />)}
           {activeMenu === 'settings' && (
