@@ -40,6 +40,7 @@ namespace HelpDeskAPI.Controllers
                 var ticket = new Ticket
                 {
                     Titulo = message.Mensaje.Length > 50 ? message.Mensaje.Substring(0, 50) : message.Mensaje,
+                    Descripcion = message.Mensaje,
                     UsuarioId = message.UsuarioId,
                     Estado = TicketEstado.Esperando,
                     FechaCreacion = DateTime.UtcNow

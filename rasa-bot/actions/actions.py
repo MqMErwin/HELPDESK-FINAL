@@ -3,8 +3,8 @@ from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.events import SlotSet
 from datetime import datetime
-import random
 import requests
+import os
 
 # Base de conocimiento de equipos válidos y su categoría
 EQUIPOS_VALIDOS = {
@@ -86,47 +86,21 @@ class ActionCrearTicket(Action):
         user_message = tracker.latest_message.get('text')
         sender_id = tracker.sender_id
         
-        # Generar número de ticket (en producción usar API)
-        num_ticket = f"HD-{random.randint(1000, 9999)}-{datetime.now().strftime('%m%d')}"
-        # Simular categorización
-        categorias = {
-            "equipo audiovisual": "AUD",
-            "equipo informático": "INF",
-            "conectividad": "RED",
-            "infraestructura": "INFRA",
-            "climatización": "CLIM",
+        api_url = os.getenv("HELPDESK_API_URL", "http://localhost:5131/api")
+
+        payload = {
+            "ticketId": 0,
+            "usuarioId": int(sender_id) if str(sender_id).isdigit() else 0,
+            "mensaje": user_message
         }
 
-        categoria = "GEN"
-        if equipo:
-            categoria = categorias.get(
-                next(
-                    (v for k, v in EQUIPOS_VALIDOS.items() if k in equipo.lower()),
-                    "GEN",
-                ),
-                "GEN",
-            )
-        
-        # Conectar con API real (ejemplo comentado)
-        """
         try:
-            response = requests.post(
-                "https://api.emi.edu.bo/tickets",
-                json={
-                    "numero": num_ticket,
-                    "descripcion": f"{equipo} en {ubicacion}: {user_message}",
-                    "categoria": categoria,
-                    "prioridad": "media",
-                    "usuario": sender_id,
-                    "estado": "pendiente"
-                },
-                headers={"Authorization": "Bearer YOUR_API_KEY"}
-            )
-            if response.status_code != 201:
-                num_ticket = "Error-API"
-        except Exception as e:
-            num_ticket = "Error-Conexion"
-        """
+            response = requests.post(f"{api_url}/chatmessages", json=payload, timeout=5)
+            response.raise_for_status()
+            data = response.json()
+            num_ticket = str(data.get("ticketId", "Error-API"))
+        except Exception:
+            num_ticket = "Error-API"
         
         # Actualizar slots
         return [
