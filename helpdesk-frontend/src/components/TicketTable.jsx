@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import './TicketTable.css';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5131/api';
 
@@ -21,7 +22,7 @@ export default function TicketTable({ token }) {
   return (
     <div>
       <h2>Lista de Tickets</h2>
-      <table border="1" cellPadding="4" cellSpacing="0">
+      <table className="ticket-table">
         <thead>
           <tr>
             <th>ID</th>
