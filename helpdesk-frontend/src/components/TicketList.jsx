@@ -92,7 +92,8 @@ function TicketList({ token, role }) {
       <ul>
         {tickets.map(ticket => (
           <li key={ticket.id} style={{ marginBottom: '1em' }}>
-            <strong>{ticket.titulo}</strong> - {ticket.estado}
+            <strong>#{ticket.id} {ticket.titulo}</strong> - {ticket.estado}
+            <p>{ticket.descripcion}</p>
             {role === 'Administrador' && (
               <>
                 <button onClick={() => handleAssign(ticket.id)}>Asignar</button>
