@@ -1,0 +1,78 @@
+{
+  "type": "IntentMaxHistoryTrackerFeaturizer",
+  "state_featurizer": {
+    "action_texts": [],
+    "entity_tag_specs": [],
+    "feature_states": {
+      "intent": {
+        "back": 0,
+        "consultar_estado": 1,
+        "despedirse": 2,
+        "nlu_fallback": 3,
+        "out_of_scope": 4,
+        "preguntas_frecuentes": 5,
+        "registrar_problema": 6,
+        "restart": 7,
+        "saludar": 8,
+        "session_start": 9
+      },
+      "action_name": {
+        "action_listen": 0,
+        "action_restart": 1,
+        "action_session_start": 2,
+        "action_default_fallback": 3,
+        "action_deactivate_loop": 4,
+        "action_revert_fallback_events": 5,
+        "action_default_ask_affirmation": 6,
+        "action_default_ask_rephrase": 7,
+        "action_two_stage_fallback": 8,
+        "action_unlikely_intent": 9,
+        "action_back": 10,
+        "...": 11,
+        "action_extract_slots": 12,
+        "action_validar_problema": 13,
+        "action_crear_ticket": 14,
+        "action_consultar_estado": 15,
+        "action_responder_faq": 16,
+        "utter_confirmar_ticket": 17,
+        "utter_default": 18,
+        "utter_despedirse": 19,
+        "utter_estado_ticket": 20,
+        "utter_faq_carreras": 21,
+        "utter_faq_contacto": 22,
+        "utter_faq_equipos_reparar": 23,
+        "utter_faq_fin_de_semana": 24,
+        "utter_faq_garantia": 25,
+        "utter_faq_horarios": 26,
+        "utter_faq_jefe_soporte": 27,
+        "utter_faq_libreta": 28,
+        "utter_faq_modalidades": 29,
+        "utter_faq_olvido_contrasena": 30,
+        "utter_faq_psa": 31,
+        "utter_faq_requisitos": 32,
+        "utter_faq_solicitar_materiales": 33,
+        "utter_faq_tiempo_respuesta": 34,
+        "utter_pedir_detalles": 35,
+        "utter_saludar": 36
+      },
+      "entities": {
+        "equipo": 0,
+        "estado": 1,
+        "fecha": 2,
+        "fecha_actualizacion": 3,
+        "num_ticket": 4,
+        "sintoma": 5,
+        "ubicacion": 6
+      },
+      "slots": {
+        "equipo_0": 0,
+        "ubicacion_0": 1,
+        "num_ticket_0": 2,
+        "estado_0": 3
+      },
+      "active_loop": {}
+    }
+  },
+  "remove_duplicates": true,
+  "max_history": 5
+}

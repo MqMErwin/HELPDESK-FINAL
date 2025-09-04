@@ -1,0 +1,44 @@
+[
+  {
+    "tag_name": "entity",
+    "ids_to_tags": {
+      "1": "B-equipo",
+      "2": "I-equipo",
+      "3": "L-equipo",
+      "4": "U-equipo",
+      "5": "B-fecha",
+      "6": "I-fecha",
+      "7": "L-fecha",
+      "8": "U-fecha",
+      "9": "B-num_ticket",
+      "10": "I-num_ticket",
+      "11": "L-num_ticket",
+      "12": "U-num_ticket",
+      "13": "B-ubicacion",
+      "14": "I-ubicacion",
+      "15": "L-ubicacion",
+      "16": "U-ubicacion",
+      "0": "O"
+    },
+    "tags_to_ids": {
+      "B-equipo": 1,
+      "I-equipo": 2,
+      "L-equipo": 3,
+      "U-equipo": 4,
+      "B-fecha": 5,
+      "I-fecha": 6,
+      "L-fecha": 7,
+      "U-fecha": 8,
+      "B-num_ticket": 9,
+      "I-num_ticket": 10,
+      "L-num_ticket": 11,
+      "U-num_ticket": 12,
+      "B-ubicacion": 13,
+      "I-ubicacion": 14,
+      "L-ubicacion": 15,
+      "U-ubicacion": 16,
+      "O": 0
+    },
+    "num_tags": 17
+  }
+]
