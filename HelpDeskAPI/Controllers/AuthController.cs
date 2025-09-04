@@ -35,6 +35,7 @@ namespace HelpDeskAPI.Controllers
 
             var claims = new[]
             {
+                new Claim("id", user.Id.ToString()),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.Nombre),
                 new Claim(ClaimTypes.Role, user.Rol)

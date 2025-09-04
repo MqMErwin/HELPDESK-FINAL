@@ -21,36 +21,28 @@ namespace HelpDeskAPI.Controllers
 
         // GET: api/tickets
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Ticket>>> GetTickets()
+        [Authorize]
+        public async Task<IActionResult> GetTickets()
         {
-            var role = User.FindFirstValue(ClaimTypes.Role);
-            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userIdClaim == null)
-            {
-                return Forbid();
-            }
+            var role = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+            var userId = int.Parse(User.Claims.First(c => c.Type == "id").Value);
 
-            int userId = int.Parse(userIdClaim);
-
-            var query = _context.Tickets
+            IQueryable<Ticket> query = _context.Tickets
                 .Include(t => t.Usuario)
-                .Include(t => t.Tecnico)
-                .AsQueryable();
+                .Include(t => t.Tecnico);
 
-            if (role == "Administrador")
+            if (role == "Solicitante")
             {
-                // Admin ve todos
+                query = query.Where(t => t.UsuarioId == userId);
             }
             else if (role == "Tecnico")
             {
                 query = query.Where(t => t.TecnicoId == userId);
             }
-            else
-            {
-                query = query.Where(t => t.UsuarioId == userId);
-            }
+            // Administrador ve todos los tickets
 
-            return await query.ToListAsync();
+            var tickets = await query.ToListAsync();
+            return Ok(tickets);
         }
 
         // GET: api/tickets/5
