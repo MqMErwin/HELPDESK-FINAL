@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace HelpDeskAPI.Models
 {
@@ -20,10 +21,13 @@ namespace HelpDeskAPI.Models
         [Required]
         public string Rol { get; set; } = string.Empty; // Roles: "Administrador", "Tecnico", "Solicitante"
 
+        [JsonIgnore]
         public ICollection<Ticket> TicketsCreados { get; set; } = new List<Ticket>();
 
+        [JsonIgnore]
         public ICollection<Ticket> TicketsAsignados { get; set; } = new List<Ticket>();
 
+        [JsonIgnore]
         public ICollection<ChatMessage> MensajesEnviados { get; set; } = new List<ChatMessage>();
     }
 }

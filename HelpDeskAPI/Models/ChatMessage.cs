@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace HelpDeskAPI.Models
 {
@@ -11,6 +12,7 @@ namespace HelpDeskAPI.Models
         public int TicketId { get; set; }
 
         [ForeignKey("TicketId")]
+        [JsonIgnore]
         public Ticket? Ticket { get; set; }
 
         [Required]

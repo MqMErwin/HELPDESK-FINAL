@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,8 +54,11 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// 👮‍♂️ Habilitar controladores
-builder.Services.AddControllers();
+// 👮‍♂️ Habilitar controladores y evitar ciclos de referencia en JSON
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
 
 // 🧪 Habilitar Swagger (documentación de API REST)
 builder.Services.AddEndpointsApiExplorer();
