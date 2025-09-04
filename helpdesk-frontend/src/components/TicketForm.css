@@ -1,14 +1,17 @@
 .ticket-form {
-  background-color: #fff;
+  background-color: var(--emi-blue-bg);
+  color: var(--dark);
   padding: 2rem;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border: 1px solid var(--gray-light);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   max-width: 500px;
+  margin: 2rem auto;
 }
 
 .ticket-form h2 {
   margin-bottom: 1rem;
-  color: var(--emi-blue);
+  color: var(--emi-blue-dark);
 }
 
 .form-group {
@@ -32,11 +35,12 @@
 
 .ticket-form button {
   background-color: var(--emi-blue);
-  color: #fff;
+  color: var(--light);
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 6px;
   cursor: pointer;
+  font-weight: 600;
   transition: var(--transition);
 }
 

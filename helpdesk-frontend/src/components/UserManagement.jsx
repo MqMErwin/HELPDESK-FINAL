@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import './UserManagement.css';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5131/api';
 
@@ -64,9 +65,9 @@ export default function UserManagement({ token }) {
   };
 
   return (
-    <div>
+    <div className="user-management">
       <h2>Usuarios</h2>
-      <form onSubmit={handleSubmit} style={{ marginBottom: '1em' }}>
+      <form className="user-form" onSubmit={handleSubmit}>
         <input
           name="nombre"
           placeholder="Nombre"
@@ -101,7 +102,7 @@ export default function UserManagement({ token }) {
         )}
       </form>
 
-      <table border="1" cellPadding="4" cellSpacing="0">
+      <table className="user-table">
         <thead>
           <tr>
             <th>ID</th>

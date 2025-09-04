@@ -1,0 +1,75 @@
+.user-management {
+  max-width: 900px;
+  margin: 2rem auto;
+  background-color: var(--emi-blue-bg);
+  color: var(--dark);
+  padding: 1.5rem;
+  border: 1px solid var(--gray-light);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.user-management h2 {
+  margin-bottom: 1rem;
+  color: var(--emi-blue-dark);
+}
+
+.user-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.user-form input,
+.user-form select {
+  padding: 0.5rem;
+  border: 1px solid var(--gray-light);
+  border-radius: 4px;
+  background-color: #fff;
+  color: var(--dark);
+}
+
+.user-form button,
+.user-table button {
+  background-color: var(--emi-blue);
+  color: var(--light);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.user-form button:hover,
+.user-table button:hover {
+  background-color: var(--emi-blue-dark);
+}
+
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+}
+
+.user-table th,
+.user-table td {
+  border: 1px solid var(--gray-light);
+  padding: 0.75rem;
+  text-align: left;
+  color: var(--dark);
+}
+
+.user-table th {
+  background-color: var(--emi-blue-bg);
+  font-weight: 600;
+}
+
+.user-table tr:nth-child(even) {
+  background-color: var(--light);
+}
+
+.user-table tr:hover {
+  background-color: var(--emi-blue-bg);
+}
