@@ -25,7 +25,12 @@ namespace HelpDeskAPI.Controllers
         public async Task<IActionResult> GetTickets()
         {
             var role = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
-            var userId = int.Parse(User.Claims.First(c => c.Type == "id").Value);
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            if (userIdClaim == null)
+            {
+                return Forbid();
+            }
+            var userId = int.Parse(userIdClaim);
 
             IQueryable<Ticket> query = _context.Tickets
                 .Include(t => t.Usuario)
