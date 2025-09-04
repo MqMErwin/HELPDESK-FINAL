@@ -120,10 +120,10 @@ export default function AdminDashboard({ onLogout, token, role }) {
                   <span>Reportes</span>
                 </button>
               </li>
-              <li className={activeMenu === 'tickets' ? 'active' : ''}>
-                <button type="button" onClick={() => setActiveMenu('tickets')}>
+              <li className={activeMenu === 'ticket-list' ? 'active' : ''}>
+                <button type="button" onClick={() => setActiveMenu('ticket-list')}>
                   <FiMessageSquare className="icon" />
-                  <span>Tickets</span>
+                  <span>Lista de Tickets</span>
                 </button>
               </li>
               <li className={activeMenu === 'users' ? 'active' : ''}>
@@ -217,9 +217,9 @@ export default function AdminDashboard({ onLogout, token, role }) {
                   <div className="card-icon">
                     <FiMessageSquare />
                   </div>
-                  <h3>Asignar Tickets</h3>
-                  <p>Asignar solicitudes a técnicos disponibles.</p>
-                  <button className="card-button" onClick={() => setActiveMenu('tickets')}>Asignar Tickets</button>
+                  <h3>Ver Tickets</h3>
+                  <p>Revisar todas las solicitudes registradas.</p>
+                  <button className="card-button" onClick={() => setActiveMenu('ticket-list')}>Ver Tickets</button>
                 </div>
 
                 <div className="admin-card users-card">
@@ -265,7 +265,7 @@ export default function AdminDashboard({ onLogout, token, role }) {
               </div>
             </>
           )}
-          {activeMenu === 'tickets' && (
+          {activeMenu === 'ticket-list' && (
             <TicketList token={token} role={role} />
           )}
           {activeMenu === 'users' && (<UserManagement token={token} />)}

@@ -110,36 +110,47 @@ function TicketList({ token, role = 'Solicitante' }) {
       {visibleTickets.length === 0 ? (
         <p>No tienes tickets registrados.</p>
       ) : (
-        <ul className="ticket-list">
-          {visibleTickets.map(ticket => (
-            <li key={ticket.id} className="ticket-item">
-              <div className="ticket-header">
-                <strong>#{ticket.id} {ticket.titulo}</strong>
-                <span className="ticket-status">{ticket.estado}</span>
-              </div>
-              <p>{ticket.descripcion}</p>
-              {role === 'Administrador' && (
-                <div className="ticket-actions">
-                  <button onClick={() => handleAssign(ticket.id)}>Asignar</button>
-                  <button onClick={() => handleEdit(ticket)}>Editar</button>
-                  <button onClick={() => handleDelete(ticket.id)}>Eliminar</button>
-                </div>
-              )}
-              {role === 'Tecnico' && (
-                <div className="ticket-actions">
-                  <select
-                    value={ticket.estado}
-                    onChange={(e) => handleStatusChange(ticket.id, e.target.value)}
-                  >
-                    {estados.map(e => (
-                      <option key={e.value} value={e.value}>{e.label}</option>
-                    ))}
-                  </select>
-                </div>
-              )}
-            </li>
-          ))}
-        </ul>
+        <table className="ticket-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Título</th>
+              <th>Descripción</th>
+              <th>Estado</th>
+              {role === 'Administrador' && <th>Acciones</th>}
+              {role === 'Tecnico' && <th>Cambiar estado</th>}
+            </tr>
+          </thead>
+          <tbody>
+            {visibleTickets.map(ticket => (
+              <tr key={ticket.id}>
+                <td>{ticket.id}</td>
+                <td>{ticket.titulo}</td>
+                <td>{ticket.descripcion}</td>
+                <td>{ticket.estado}</td>
+                {role === 'Administrador' && (
+                  <td className="ticket-actions">
+                    <button onClick={() => handleAssign(ticket.id)}>Asignar</button>
+                    <button onClick={() => handleEdit(ticket)}>Editar</button>
+                    <button onClick={() => handleDelete(ticket.id)}>Eliminar</button>
+                  </td>
+                )}
+                {role === 'Tecnico' && (
+                  <td className="ticket-actions">
+                    <select
+                      value={ticket.estado}
+                      onChange={(e) => handleStatusChange(ticket.id, e.target.value)}
+                    >
+                      {estados.map(e => (
+                        <option key={e.value} value={e.value}>{e.label}</option>
+                      ))}
+                    </select>
+                  </td>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
     </div>
   );
