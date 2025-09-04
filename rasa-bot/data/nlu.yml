@@ -27,18 +27,23 @@ nlu:
     - nos vemos mañana
     - que descanses
 
-- intent: registrar_problema
-  examples: |
-    - tengo un problema con [el proyector](equipo)
-    - no funciona [el internet](equipo)
-    - [la impresora](equipo) no imprime
-    - hay fallas en [el sistema eléctrico](equipo)
-    - necesito reportar un fallo en [el laboratorio 3](ubicacion)
-    - [las computadoras](equipo) del aula 4 no encienden
-    - el [software](equipo) de diseño se cierra solo
-    - hay un problema en [el aire acondicionado](equipo) del [aula 202](ubicacion)
-    - [el servidor](equipo) no responde
-    - [el cañón proyector](equipo) no muestra imagen
+  - intent: registrar_problema
+    examples: |
+      - tengo un problema con [el proyector](equipo)
+      - no funciona [el internet](equipo)
+      - [la impresora](equipo) no imprime
+      - hay fallas en [el sistema eléctrico](equipo)
+      - necesito reportar un fallo en [el laboratorio 3](ubicacion)
+      - [las computadoras](equipo) del aula 4 no encienden
+      - el [software](equipo) de diseño se cierra solo
+      - hay un problema en [el aire acondicionado](equipo) del [aula 202](ubicacion)
+      - [el servidor](equipo) no responde
+      - [el cañón proyector](equipo) no muestra imagen
+      - no puedo iniciar sesión en el sistema
+      - tengo problemas de inicio de sesión
+      - mi dispositivo no enciende
+      - no puedo cargar las notas en el sistema
+      - necesito ayuda con el acceso a la plataforma
 
 - intent: consultar_estado
   examples: |

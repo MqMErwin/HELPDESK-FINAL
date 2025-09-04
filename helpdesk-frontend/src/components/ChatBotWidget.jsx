@@ -3,9 +3,23 @@ import './ChatBotWidget.css';
 
 export default function ChatBotWidget() {
   const [isOpen, setIsOpen] = useState(false);
+  const [selectedRole, setSelectedRole] = useState(null);
   const [messages, setMessages] = useState([
     {
-      text: "¡Hola! Soy el asistente de soporte de la EMI Cochabamba. ¿En qué puedo ayudarte?",
+      text: "¡Hola! Soy el asistente de soporte de la EMI Cochabamba.",
+      sender: "bot"
+    },
+    {
+      text: "¿Eres estudiante, docente o personal administrativo?",
+      sender: "bot",
+      buttons: [
+        { title: "Estudiante", payload: "Estudiante" },
+        { title: "Docente", payload: "Docente" },
+        { title: "Administrativo", payload: "Administrativo" }
+      ]
+    },
+    {
+      text: "También puedo ayudarte con preguntas frecuentes:",
       sender: "bot",
       buttons: [
         { title: "Modalidades de admisión", payload: "Cuáles son las modalidades de Admisión a la EMI?" },
@@ -23,6 +37,27 @@ export default function ChatBotWidget() {
   const messagesEndRef = useRef(null);
 
   const RASA_ENDPOINT = 'http://localhost:5005/webhooks/rest/webhook';
+
+  const getProblemButtons = (role) => {
+    if (role === 'Estudiante') {
+      return [
+        { title: 'Problemas de inicio de sesión', payload: 'Soy estudiante y tengo problemas de inicio de sesión' },
+        { title: 'Otros', payload: 'Soy estudiante y tengo otro problema' }
+      ];
+    }
+    if (role === 'Docente') {
+      return [
+        { title: 'Inicio de sesión', payload: 'Soy docente y tengo problemas de inicio de sesión' },
+        { title: 'Dispositivo', payload: 'Soy docente con un dispositivo con problemas' },
+        { title: 'Cargado de notas', payload: 'Soy docente y tengo problemas con el cargado de notas' },
+        { title: 'Otros', payload: 'Soy docente y tengo otro problema' }
+      ];
+    }
+    return [
+      { title: 'Inicio de sesión', payload: 'Soy personal administrativo y tengo problemas de inicio de sesión' },
+      { title: 'Otros', payload: 'Soy personal administrativo y tengo otro problema' }
+    ];
+  };
 
   // Cargar mensajes guardados al iniciar
   useEffect(() => {
@@ -49,23 +84,32 @@ export default function ChatBotWidget() {
     }
   };
 
-  const handleSend = async (textToSend = null) => {
+  const handleSend = async (textToSend = null, displayText = null) => {
     const message = textToSend || newMessage.trim();
     if (!message) return;
 
     // Agregar mensaje de usuario
-    const userMessage = { text: message, sender: "user" };
+    const userMessage = { text: displayText || message, sender: 'user' };
     setMessages(prev => [...prev, userMessage]);
     if (!textToSend) setNewMessage('');
+
+    // Manejo de selección de rol
+    if (["Estudiante", "Docente", "Administrativo"].includes(message)) {
+      setSelectedRole(message);
+      const buttons = getProblemButtons(message);
+      setMessages(prev => [...prev, { text: '¿Cuál es el problema identificado?', sender: 'bot', buttons }]);
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      console.log("Enviando a Rasa:", { sender: sessionId, message }); // Debug
+      console.log('Enviando a Rasa:', { sender: sessionId, message }); // Debug
 
       const response = await fetch(RASA_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           sender: sessionId,
           message: message
         })
@@ -76,25 +120,25 @@ export default function ChatBotWidget() {
       }
 
       const data = await response.json();
-      console.log("Respuesta de Rasa:", data); // Debug
+      console.log('Respuesta de Rasa:', data); // Debug
 
       if (!Array.isArray(data)) {
-        throw new Error("Formato de respuesta inválido");
+        throw new Error('Formato de respuesta inválido');
       }
 
       // Procesar respuesta
       const botReplies = data.map(msg => ({
-        text: msg.text || "No entendí tu solicitud",
-        sender: "bot",
+        text: msg.text || 'No entendí tu solicitud',
+        sender: 'bot',
         buttons: msg.buttons || null
       }));
 
       setMessages(prev => [...prev, ...botReplies]);
     } catch (error) {
-      console.error("Error completo:", error);
-      setMessages(prev => [...prev, { 
-        text: "⚠️ No pude conectarme con el servicio. Intenta nuevamente más tarde.", 
-        sender: "bot" 
+      console.error('Error completo:', error);
+      setMessages(prev => [...prev, {
+        text: '⚠️ No pude conectarme con el servicio. Intenta nuevamente más tarde.',
+        sender: 'bot'
       }]);
     } finally {
       setIsLoading(false);
@@ -126,7 +170,7 @@ export default function ChatBotWidget() {
                     {msg.buttons.map((btn, i) => (
                       <button
                         key={i}
-                        onClick={() => handleSend(btn.payload || btn.title)}
+                        onClick={() => handleSend(btn.payload || btn.title, btn.title)}
                         disabled={isLoading}
                       >
                         {btn.title}
