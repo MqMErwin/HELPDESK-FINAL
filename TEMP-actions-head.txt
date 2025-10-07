@@ -1,0 +1,189 @@
+from typing import Any, Text, Dict, List
+from rasa_sdk import Action, Tracker
+from rasa_sdk.executor import CollectingDispatcher
+from rasa_sdk.events import SlotSet
+from datetime import datetime
+import requests
+import os
+
+# Base de conocimiento de equipos válidos y su categoría
+EQUIPOS_VALIDOS = {
+    "proyector": "equipo audiovisual",
+    "cañón proyector": "equipo audiovisual",
+    "computadora": "equipo informático",
+    "impresora": "equipo periférico",
+    "internet": "conectividad",
+    "servidor": "infraestructura",
+    "aire acondicionado": "climatización",
+    "software": "aplicación",
+}
+
+class ActionValidarProblema(Action):
+    def name(self) -> Text:
+        return "action_validar_problema"
+
+    def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict[Text, Any]]:
+
+        equipo = tracker.get_slot("equipo")
+        ubicacion = tracker.get_slot("ubicacion")
+
+        # Lista de ubicaciones aceptadas
+        ubicaciones_validas = ["aula", "laboratorio", "oficina", "sala", "auditorio"]
+
+        # Validación de equipo
+        if equipo:
+            equipo_normalizado = next(
+                (k for k in EQUIPOS_VALIDOS if k in equipo.lower()),
+                None
+            )
+
+            if not equipo_normalizado:
+                dispatcher.utter_message(
+                    text=f"Lo siento, no reconozco el equipo '{equipo}'. "
+                         f"Los equipos válidos son: {', '.join(EQUIPOS_VALIDOS.keys())}"
+                )
+                return [SlotSet("equipo", None)]
+            
+            # Actualizar slot con nombre normalizado
+            equipo = equipo_normalizado
+
+        # Validación de ubicación
+        if ubicacion and not any(u in ubicacion.lower() for u in ubicaciones_validas):
+            dispatcher.utter_message(
+                text=f"La ubicación '{ubicacion}' no parece válida. "
+                     f"Por favor especifica aula, laboratorio, oficina, etc."
+            )
+            return [SlotSet("ubicacion", None)]
+
+        if not equipo or not ubicacion:
+            faltante = []
+            if not equipo:
+                faltante.append("qué equipo presenta el problema")
+            if not ubicacion:
+                faltante.append("dónde se encuentra")
+            dispatcher.utter_message(
+                text="Necesito saber " + " y ".join(faltante) + " para registrar tu ticket."
+            )
+
+        return [SlotSet("equipo", equipo), SlotSet("ubicacion", ubicacion)]
+
+class ActionCrearTicket(Action):
+    def name(self) -> Text:
+        return "action_crear_ticket"
+
+    def run(self, dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        
+        # Extraer información
+        equipo = tracker.get_slot("equipo")
+        ubicacion = tracker.get_slot("ubicacion") or "Ubicación no especificada"
+        user_message = tracker.latest_message.get('text')
+        sender_id = tracker.sender_id
+        
+        api_url = os.getenv("HELPDESK_API_URL", "http://localhost:5131/api")
+
+        payload = {
+            "ticketId": 0,
+            "usuarioId": int(sender_id) if str(sender_id).isdigit() else 0,
+            "mensaje": user_message
+        }
+
+        try:
+            response = requests.post(f"{api_url}/chatmessages", json=payload, timeout=5)
+            response.raise_for_status()
+            data = response.json()
+            num_ticket = str(data.get("ticketId", "Error-API"))
+        except Exception:
+            num_ticket = "Error-API"
+        
+        # Actualizar slots
+        return [
+            SlotSet("num_ticket", num_ticket),
+            SlotSet("equipo", equipo),
+            SlotSet("ubicacion", ubicacion),
+            SlotSet("fecha_actualizacion", datetime.now().strftime("%d/%m/%Y %H:%M"))
+        ]
+
+class ActionConsultarEstado(Action):
+    def name(self) -> Text:
+        return "action_consultar_estado"
+
+    def run(self, dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        
+        num_ticket = tracker.get_slot("num_ticket")
+        
+        # Simular base de datos de tickets
+        tickets_db = {
+            "HD-1234": {"estado": "en progreso", "tecnico": "Juan Pérez", "comentario": "El técnico está diagnosticando el problema"},
+            "HD-5678": {"estado": "pendiente", "tecnico": "", "comentario": "En cola para asignación"},
+            "HD-9012": {"estado": "resuelto", "tecnico": "María Gómez", "comentario": "Problema solucionado. Pendiente verificación del usuario"}
+        }
+        
+        if num_ticket in tickets_db:
+            ticket = tickets_db[num_ticket]
+            estado = ticket["estado"]
+            comentario = ticket["comentario"]
+            
+            if estado == "resuelto":
+                comentario += " ¿Podemos cerrar el ticket?"
+        else:
+            estado = "no encontrado"
+            comentario = "No existe un ticket con ese número. Verifica el número o reporta un nuevo problema."
+        
+        return [
+            SlotSet("estado", estado),
+            SlotSet("comentario", comentario),
+            SlotSet("fecha_actualizacion", datetime.now().strftime("%d/%m/%Y %H:%M"))
+        ]
+
+class ActionResponderFAQ(Action):
+    def name(self) -> Text:
+        return "action_responder_faq"
+
+    def run(self, dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        
+        latest_message = tracker.latest_message.get('text').lower()
+
+        if "horario" in latest_message or "hora" in latest_message:
+            dispatcher.utter_message(response="utter_faq_horarios")
+        elif "modalidad" in latest_message or "admis" in latest_message:
+            dispatcher.utter_message(response="utter_faq_modalidades")
+        elif "requisit" in latest_message or "document" in latest_message:
+            dispatcher.utter_message(response="utter_faq_requisitos")
+        elif "psa" in latest_message or "suficiencia" in latest_message:
+            dispatcher.utter_message(response="utter_faq_psa")
+        elif "libreta" in latest_message or "servicio militar" in latest_message:
+            dispatcher.utter_message(response="utter_faq_libreta")
+        elif "carrera" in latest_message or "programa" in latest_message:
+            dispatcher.utter_message(response="utter_faq_carreras")
+        elif "tiempo" in latest_message or "tardan" in latest_message or "responden" in latest_message:
+            dispatcher.utter_message(response="utter_faq_tiempo_respuesta")
+        elif "equipo" in latest_message and ("repar" in latest_message or "arregl" in latest_message):
+            dispatcher.utter_message(response="utter_faq_equipos_reparar")
+        elif "fin de semana" in latest_message or "fines de semana" in latest_message or "domingo" in latest_message:
+            dispatcher.utter_message(response="utter_faq_fin_de_semana")
+        elif "garant" in latest_message:
+            dispatcher.utter_message(response="utter_faq_garantia")
+        elif "jefe" in latest_message and "soporte" in latest_message:
+            dispatcher.utter_message(response="utter_faq_jefe_soporte")
+        elif "olvid" in latest_message and "contrase" in latest_message:
+            dispatcher.utter_message(response="utter_faq_olvido_contrasena")
+        elif "material" in latest_message:
+            dispatcher.utter_message(response="utter_faq_solicitar_materiales")
+        elif "contacto" in latest_message or "llamar" in latest_message or "oficina" in latest_message:
+            dispatcher.utter_message(response="utter_faq_contacto")
+        else:
+            dispatcher.utter_message(response="utter_default")
+
+        return []
+

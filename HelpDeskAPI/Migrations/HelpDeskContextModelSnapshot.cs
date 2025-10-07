@@ -51,12 +51,18 @@ namespace HelpDeskAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("Calificacion")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Estado")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("FechaCalificacion")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("FechaCreacion")
@@ -87,9 +93,10 @@ namespace HelpDeskAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Contraseña")
+                    b.Property<string>("Contrasena")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT")
+                        .HasColumnName("Contraseña");
 
                     b.Property<string>("Correo")
                         .IsRequired()

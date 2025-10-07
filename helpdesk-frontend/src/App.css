@@ -40,11 +40,11 @@
 
 
 body {
-  font-family: 'Arial', sans-serif;
-  background-color: #1e293b;
-  color: white;
-  text-align: center;
-  padding: 20px;
+  font-family: var(--app-font, 'Poppins', 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif);
+  background-color: var(--app-background, #eef3fb);
+  color: var(--app-text, #1c2a4d);
+  text-align: left;
+  padding: 0;
 }
 
 .dashboard {

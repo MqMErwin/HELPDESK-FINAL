@@ -13,6 +13,13 @@ nlu:
     - buenas tardes
     - cómo estás?
     - se te extrañaba!
+    - hola bot
+    - muy buenas
+    - buenasss
+    - holi
+    - hey
+    - buenas noches
+    - que hay
 
 - intent: despedirse
   examples: |
@@ -26,6 +33,10 @@ nlu:
     - hasta la próxima
     - nos vemos mañana
     - que descanses
+    - gracias, eso es todo
+    - listo, gracias
+    - muchas gracias, chau
+    - hablamos luego
 
   - intent: registrar_problema
     examples: |
@@ -44,6 +55,23 @@ nlu:
       - mi dispositivo no enciende
       - no puedo cargar las notas en el sistema
       - necesito ayuda con el acceso a la plataforma
+      - error de autenticación al entrar al portal
+      - se bloqueó mi cuenta al intentar ingresar
+      - pantalla en blanco al iniciar el equipo
+      - la red wifi de docentes no conecta
+      - ethernet sin internet en la oficina
+      - el proyector parpadea y se apaga
+      - impresora atascada con papel
+      - la pc del [laboratorio 1](ubicacion) no arranca
+      - se cayó el sistema de notas
+      - necesito soporte con correo institucional
+      - olvidé mi contraseña
+      - restablecer password del sistema
+      - fallo en Google Workspace institucional
+      - el beam no prende
+      - el cañon no proyecta
+      - proyector sin señal HDMI
+      - problema de red en [aula 101](ubicacion)
 
 - intent: consultar_estado
   examples: |
@@ -57,6 +85,9 @@ nlu:
     - sigue pendiente mi solicitud?
     - han resuelto lo del [laboratorio](ubicacion)?
     - hay novedades con mi caso?
+    - dime el estado de [HD-9012](num_ticket)
+    - en qué va el ticket [HD-5678](num_ticket)
+    - consulta estado del caso [HD-1111](num_ticket)
 
 - intent: preguntas_frecuentes
   examples: |
@@ -76,3 +107,166 @@ nlu:
     - cómo obtengo la libreta de servicio militar en la emi?
     - qué carreras ofrece la emi?
     - cuáles son los horarios de atención?
+    - horarios de atención
+    - contacto soporte
+    - teléfono de soporte
+    - hay atención sábado?
+    - políticas de garantía
+
+# Lookup tables para mejorar reconocimiento de entidades
+- lookup: equipo
+  examples: |
+    - proyector
+    - cañón
+    - beam
+    - cañón proyector
+    - computadora
+    - pc
+    - laptop
+    - impresora
+    - router
+    - switch
+    - internet
+    - red
+    - servidor
+    - aire acondicionado
+    - software
+
+# Sinónimos de equipos y términos frecuentes
+- synonym: proyector
+  examples: |
+    - cañón
+    - cañón proyector
+    - beam
+    - beamer
+
+- synonym: computadora
+  examples: |
+    - pc
+    - equipo
+    - ordenador
+    - laptop
+
+- synonym: internet 
+  examples: |
+    - red
+    - wifi
+    - ethernet
+
+- synonym: impresora
+  examples: |
+    - printer
+    - multifuncional
+- intent: faq_modalidades
+  examples: |
+    - ¿Cuáles son las modalidades de admisión?
+    - �Cu�les son las modalidades de admisi�n?
+    - Modalidades de ingreso a la EMI
+    - formas de admisión en la emi
+    - ¿Cómo puedo ingresar a la EMI?
+    - tipos de admisión disponibles en la EMI
+    - opciones de admisión para estudiar en la emi
+    - vías de ingreso a la universidad emi
+    - admisión preuniversitario o prueba en la emi
+    - existen cursos preuniversitarios o la PSA
+    - ¿tienen curso regular e intensivo?
+    - ¿qué modalidades tienen para postular?
+    - ingreso: regular, intensivo o PSA
+    - maneras de entrar a la emi
+    - necesito saber las modalidades de admisión de la emi
+    - ¿qué alternativas de admisión existen?
+    - cuáles son los procesos de admisión vigentes
+    - información sobre preuniversitario y prueba de suficiencia
+
+- intent: faq_requisitos
+  examples: |
+    - ¿Cuáles son los requisitos para la EMI?
+    - requisitos para formar parte de la emi
+    - documentos necesarios para inscribirse en la emi
+    - qué papeles debo presentar para ingresar
+    - requisitos de admisión a la universidad emi
+    - lista de documentos para postular
+    - qué se necesita para matricularse en la emi
+    - requisitos: CI, diploma, etc.
+    - condiciones para ser admitido en la emi
+    - cuáles son los requisitos del ingreso
+    - documentación para ser estudiante de la emi
+    - qué debo llevar para la inscripción
+    - requisitos para nuevos estudiantes
+    - ¿piden croquis y factura de luz o agua?
+    - ¿necesito copia del carnet del tutor?
+    - pasos y requisitos de inscripción en la emi
+
+- intent: faq_psa
+  examples: |
+    - ¿Qué es la PSA?
+    - prueba de suficiencia académica emi
+    - detalles de la prueba PSA
+    - en qué consiste la PSA
+    - cuánto cuesta la inscripción a la PSA
+    - fechas de inscripción de la PSA
+    - cuándo se rinde la prueba de suficiencia
+    - puntaje mínimo para aprobar la PSA
+    - materias que evalúa la PSA
+    - requisitos para presentarse a la PSA
+    - dónde deposito para la PSA
+    - información completa de la PSA emi
+    - qué día es el examen de la PSA
+    - precio de la PSA y requisitos
+    - inscripción a la PSA del 16 al 24 de enero
+    - examen 25 al 27 de enero por la mañana
+
+- intent: faq_libreta
+  examples: |
+    - ¿Cómo obtener la libreta de servicio militar?
+    - libreta militar en la emi
+    - formación militar y libreta en la emi
+    - se obtiene libreta de reserva en la emi
+    - requisitos para libreta militar en la emi
+    - instrucción militar sábados en la mañana
+    - cuánto dura la instrucción militar
+    - grados que se obtienen: subteniente o sargento
+    - la formación militar es voluntaria
+    - edad máxima para la formación militar
+    - menos de 22 años para iniciar estudios
+    - materia militar teórica nota mínima 7.1
+    - cómo tramitar la libreta siendo estudiante de la emi
+    - información sobre libreta de servicio militar
+    - obtener libreta como reserva en la emi
+
+- intent: faq_carreras
+  examples: |
+    - ¿Qué carreras ofrece la EMI?
+    - carreras disponibles en la emi
+    - programas de licenciatura y técnico superior
+    - oferta académica emi
+    - en qué sedes está la emi
+    - unidades académicas de la emi
+    - certificaciones que otorgan al graduarse
+    - lista de carreras de licenciatura
+    - técnico superior que ofrece la emi
+    - carreras en sistemas, industrial, civil, telecomunicaciones
+    - carreras en La Paz Cochabamba Santa Cruz Riberalta Trópico
+    - ¿qué títulos entregan al graduarse?
+    - me puedes mostrar la oferta de carreras
+    - programas académicos disponibles
+    - ¿qué opciones de estudio hay en la emi?
+
+- intent: faq_horarios
+  examples: |
+    - ¿Cuáles son los horarios de atención?
+    - horarios de atención de la emi
+    - en qué horarios atienden
+    - atención al público horarios
+    - horario de lunes a viernes
+    - atienden los sábados y domingos
+    - horarios por día de la semana
+    - de qué hora a qué hora abren
+    - horario del martes
+    - horario del miércoles
+    - horario del viernes
+    - ¿qué días están cerrados?
+    - horarios de oficina de soporte
+    - hora de apertura y cierre
+    - a qué hora atienden los martes
+    - ¿trabajan fines de semana?

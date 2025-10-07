@@ -11,3 +11,39 @@ rules:
   steps:
   - intent: preguntas_frecuentes
   - action: action_responder_faq
+
+# Reglas específicas para FAQs
+- rule: FAQ modalidades
+  steps:
+  - intent: faq_modalidades
+  - action: utter_faq_modalidades_detalle
+
+- rule: FAQ requisitos
+  steps:
+  - intent: faq_requisitos
+  - action: utter_faq_requisitos_detalle
+
+- rule: FAQ PSA
+  steps:
+  - intent: faq_psa
+  - action: utter_faq_psa_detalle
+
+- rule: FAQ libreta
+  steps:
+  - intent: faq_libreta
+  - action: utter_faq_libreta_detalle
+
+- rule: FAQ carreras
+  steps:
+  - intent: faq_carreras
+  - action: utter_faq_carreras_detalle
+
+- rule: FAQ horarios
+  steps:
+  - intent: faq_horarios
+  - action: utter_faq_horarios_detalle
+
+- rule: Clasificar problema al registrarlo
+  steps:
+  - intent: registrar_problema
+  - action: action_clasificar_problema

@@ -46,6 +46,42 @@ namespace HelpDeskAPI.Controllers
                     FechaCreacion = DateTime.UtcNow
                 };
 
+                // Intento de autoasignación (si hay técnicos disponibles)
+                try
+                {
+                    var technicians = await _context.Users
+                        .Where(u => u.Rol == "Tecnico")
+                        .Select(u => new { u.Id })
+                        .ToListAsync();
+
+                    if (technicians.Count > 0)
+                    {
+                        var loads = await _context.Tickets
+                            .Where(t => t.TecnicoId != null && t.Estado != TicketEstado.Resuelto)
+                            .GroupBy(t => t.TecnicoId)
+                            .Select(g => new { TecnicoId = g.Key!.Value, Count = g.Count() })
+                            .ToListAsync();
+
+                        int selectedTechId = technicians
+                            .Select(t => new
+                            {
+                                t.Id,
+                                Count = loads.FirstOrDefault(l => l.TecnicoId == t.Id)?.Count ?? 0
+                            })
+                            .OrderBy(x => x.Count)
+                            .ThenBy(x => x.Id)
+                            .First().Id;
+
+                        ticket.TecnicoId = selectedTechId;
+                        ticket.Estado = TicketEstado.Asignado;
+                    }
+                }
+                catch
+                {
+                    ticket.TecnicoId = null;
+                    ticket.Estado = TicketEstado.Esperando;
+                }
+
                 _context.Tickets.Add(ticket);
                 await _context.SaveChangesAsync();
 

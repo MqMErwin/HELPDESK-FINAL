@@ -165,3 +165,4 @@ C:\Users\ErwinL\Desktop\PROYECTO DE GRADO\HELPDESK\HelpDeskAPI\bin\Debug\net9.0\
 C:\Users\ErwinL\Desktop\PROYECTO DE GRADO\HELPDESK\HelpDeskAPI\bin\Debug\net9.0\Microsoft.IdentityModel.Tokens.dll
 C:\Users\ErwinL\Desktop\PROYECTO DE GRADO\HELPDESK\HelpDeskAPI\bin\Debug\net9.0\System.IdentityModel.Tokens.Jwt.dll
 C:\Users\ErwinL\Desktop\PROYECTO DE GRADO\HELPDESK\HelpDeskAPI\obj\Debug\net9.0\HelpDeskAPI.sourcelink.json
+C:\Users\ErwinL\Desktop\PROYECTO DE GRADO\HELPDESK\HelpDeskAPI\bin\Debug\net9.0\.dotnetwatch.json

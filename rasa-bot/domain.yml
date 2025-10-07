@@ -6,6 +6,12 @@ intents:
   - registrar_problema
   - consultar_estado
   - preguntas_frecuentes
+  - faq_modalidades
+  - faq_requisitos
+  - faq_psa
+  - faq_libreta
+  - faq_carreras
+  - faq_horarios
 
 responses:
   utter_saludar:
@@ -81,6 +87,25 @@ responses:
     - text: "Voy a derivar tu consulta a un técnico. Mientras tanto, ¿hay algo más específico que necesites?"
     - text: "No estoy seguro de entender. ¿Podrías darme más detalles sobre tu consulta?"
 
+  # Respuestas detalladas de FAQs (nuevas variantes)
+  utter_faq_modalidades_detalle:
+    - text: "Modalidades de admisi��n en la EMI:\n- Preuniversitario Curso Regular: 11 semanas, lunes a viernes (ma��ana y tarde).\n- Preuniversitario Curso Intensivo: 4 semanas, lunes a s��bado (ma��ana y tarde).\n- Prueba de Suficiencia Acad��mica (PSA): se aprueba con al menos 5.1/10."
+
+  utter_faq_requisitos_detalle:
+    - text: "Requisitos para formar parte de la EMI:\n- Aprobar una de las modalidades de admisi��n.\n- Fotocopia legalizada del diploma de bachiller.\n- Certificado de nacimiento original.\n- Fotocopia del carnet de identidad del estudiante.\n- Fotocopia del carnet de identidad del padre, madre o tutor.\n- Croquis de domicilio.\n- Fotocopia de una factura de luz o agua del domicilio."
+
+  utter_faq_psa_detalle:
+    - text: "Prueba de Suficiencia Acad��mica (PSA):\n- Eval��a Matem��ticas, F��sica y Qu��mica.\n- Nota m��nima: 5.1/10.\n- Inscripci��n: Bs. 100.\n- Inscripciones: 16 al 24 de enero.\n- Examen: 25, 26 y 27 de enero (turno ma��ana).\n- Requisitos: CI, diploma de bachiller y boleta de dep��sito Banco Uni��n (N�� 10000006036144)."
+
+  utter_faq_libreta_detalle:
+    - text: "Obtenci��n de libreta de Servicio Militar en la EMI:\n- La formaci��n militar es voluntaria y otorga libreta con grado de militar de reserva.\n- Grados: Subteniente (licenciatura) o Sargento (t��cnico superior).\n- Instrucci��n militar: 2 primeros semestres (s��bados en la ma��ana) + materia militar te��rica (nota m��nima 7.1).\n- Requisito: tener menos de 22 a��os al inicio de los estudios."
+
+  utter_faq_carreras_detalle:
+    - text: "Oferta acad��mica de la EMI:\n- 5 unidades acad��micas: La Paz, Cochabamba, Santa Cruz, Riberalta y el Tr��pico.\n- 3 certificaciones al graduarte: t��tulo profesional, diploma acad��mico y libreta de servicio militar.\n- Licenciaturas: Civil, Geogr��fica, Sistemas Electr��nicos, Industrial, Agron��mica, Comercial, de Sistemas, Agroindustrial, Ambiental, Petrolera, Mecatr��nica, Telecomunicaciones, Financiera.\n- T��cnico Superior: Inform��tica, Sistemas Electr��nicos, Energ��as Renovables, Construcci��n Civil, Dise��o Gr��fico, Comunicaci��n Audiovisual."
+
+  utter_faq_horarios_detalle:
+    - text: "Horarios de atenci��n:\n- Lunes: 08:00-12:00 y 14:30-16:00\n- Martes: 08:00-18:30\n- Mi��rcoles a Viernes: 08:00-16:00\n- S��bados y Domingos: Cerrado"
+
 entities:
   - equipo
   - ubicacion
@@ -89,6 +114,7 @@ entities:
   - fecha
   - fecha_actualizacion
   - sintoma
+  - categoria
 
 slots:
   equipo:
@@ -123,11 +149,24 @@ slots:
     mappings:
     - type: custom
 
+  categoria:
+    type: text
+    influence_conversation: true
+    mappings:
+    - type: custom
+
 actions:
   - action_validar_problema
   - action_crear_ticket
   - action_consultar_estado
   - action_responder_faq
+  - action_clasificar_problema
+
+forms:
+  ticket_form:
+    required_slots:
+      - equipo
+      - ubicacion
 
 session_config:
   session_expiration_time: 60

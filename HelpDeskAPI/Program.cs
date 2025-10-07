@@ -58,6 +58,8 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    // Serializar enums como texto y aceptar texto al deserializar
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
 // 🧪 Habilitar Swagger (documentación de API REST)

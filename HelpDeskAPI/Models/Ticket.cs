@@ -34,7 +34,13 @@ namespace HelpDeskAPI.Models
 
         public TicketEstado Estado { get; set; } = TicketEstado.Esperando;
 
-        // ✅ Relación con mensajes
+        // Calificación del usuario (1-5). Null si no calificado
+        public int? Calificacion { get; set; }
+
+        public DateTime? FechaCalificacion { get; set; }
+
+        // Relación con mensajes
         public ICollection<ChatMessage> ChatMessages { get; set; } = new List<ChatMessage>();
     }
 }
+

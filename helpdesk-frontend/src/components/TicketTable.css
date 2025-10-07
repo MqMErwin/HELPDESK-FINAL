@@ -4,6 +4,11 @@
   color: var(--dark);
 }
 
+.ticket-table-title {
+  color: var(--emi-blue-dark);
+  margin: 0 0 1rem 0;
+}
+
 .ticket-table th,
 .ticket-table td {
   border: 1px solid #ddd;

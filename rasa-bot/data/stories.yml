@@ -10,6 +10,7 @@ stories:
       entities:
         - equipo
         - ubicacion
+    - action: action_clasificar_problema
     - action: action_validar_problema
     - action: action_crear_ticket
     - action: utter_confirmar_ticket
@@ -21,6 +22,7 @@ stories:
     - intent: registrar_problema
       entities:
         - equipo
+    - action: action_clasificar_problema
     - action: utter_pedir_detalles
     - intent: registrar_problema
       entities:
@@ -67,6 +69,7 @@ stories:
     - intent: preguntas_frecuentes
     - action: action_responder_faq
     - intent: registrar_problema
+    - action: action_clasificar_problema
     - action: utter_pedir_detalles
     - intent: registrar_problema
     - action: action_crear_ticket

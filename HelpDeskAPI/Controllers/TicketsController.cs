@@ -86,6 +86,46 @@ namespace HelpDeskAPI.Controllers
                 return BadRequest(ModelState);
             }
 
+            // Intento de autoasignación: asignar al técnico con menor carga de tickets abiertos
+            // Se aplica solo si existen usuarios con rol "Tecnico"
+            try
+            {
+                var technicians = await _context.Users
+                    .Where(u => u.Rol == "Tecnico")
+                    .Select(u => new { u.Id })
+                    .ToListAsync();
+
+                if (technicians.Count > 0)
+                {
+                    // Cargas por técnico (tickets no resueltos)
+                    var loads = await _context.Tickets
+                        .Where(t => t.TecnicoId != null && t.Estado != TicketEstado.Resuelto)
+                        .GroupBy(t => t.TecnicoId)
+                        .Select(g => new { TecnicoId = g.Key!.Value, Count = g.Count() })
+                        .ToListAsync();
+
+                    // Seleccionar el técnico con menor carga
+                    int selectedTechId = technicians
+                        .Select(t => new
+                        {
+                            t.Id,
+                            Count = loads.FirstOrDefault(l => l.TecnicoId == t.Id)?.Count ?? 0
+                        })
+                        .OrderBy(x => x.Count)
+                        .ThenBy(x => x.Id)
+                        .First().Id;
+
+                    ticket.TecnicoId = selectedTechId;
+                    ticket.Estado = TicketEstado.Asignado;
+                }
+            }
+            catch
+            {
+                // Si falla la autoasignación, se deja sin técnico y en estado Esperando
+                ticket.TecnicoId = null;
+                ticket.Estado = TicketEstado.Esperando;
+            }
+
             _context.Tickets.Add(ticket);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetTicket), new { id = ticket.Id }, ticket);
@@ -154,7 +194,7 @@ namespace HelpDeskAPI.Controllers
 
         // PUT: api/tickets/{id}/status
         [HttpPut("{id}/status")]
-        [Authorize(Roles = "Tecnico")]
+        [Authorize(Roles = "Tecnico,Administrador")]
         public async Task<IActionResult> UpdateStatus(int id, [FromBody] UpdateTicketStatusRequest request)
         {
             var ticket = await _context.Tickets.FindAsync(id);
@@ -163,8 +203,82 @@ namespace HelpDeskAPI.Controllers
                 return NotFound();
             }
 
+            // Seguridad: solo el tecnico asignado o un Administrador puede cambiar el estado
+            var role = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            if (role != "Administrador")
+            {
+                if (userIdClaim == null || ticket.TecnicoId == null || ticket.TecnicoId != int.Parse(userIdClaim))
+                {
+                    return Forbid();
+                }
+            }
+
+            var previous = ticket.Estado;
             ticket.Estado = request.Estado;
             await _context.SaveChangesAsync();
+
+            // Si se marcó como Resuelto, notificar al usuario para calificar
+            if (previous != TicketEstado.Resuelto && request.Estado == TicketEstado.Resuelto)
+            {
+                try
+                {
+                    int senderId = 0;
+                    if (role == "Administrador")
+                    {
+                        // si es admin, usar su propio id
+                        senderId = int.Parse(userIdClaim!);
+                    }
+                    else if (ticket.TecnicoId.HasValue)
+                    {
+                        senderId = ticket.TecnicoId.Value;
+                    }
+
+                    if (senderId > 0)
+                    {
+                        _context.ChatMessages.Add(new ChatMessage
+                        {
+                            TicketId = ticket.Id,
+                            UsuarioId = senderId,
+                            Mensaje = $"Tu ticket #{ticket.Id} fue marcado como RESUELTO. Por favor califica el servicio (1-5) desde tu panel.",
+                            Fecha = DateTime.UtcNow
+                        });
+                        await _context.SaveChangesAsync();
+                    }
+                }
+                catch { /* noop */ }
+            }
+            return NoContent();
+        }
+
+        public class RateTicketRequest
+        {
+            public int Calificacion { get; set; }
+        }
+
+        // POST: api/tickets/{id}/rate
+        [HttpPost("{id}/rate")]
+        [Authorize(Roles = "Solicitante,Administrador")]
+        public async Task<IActionResult> RateTicket(int id, [FromBody] RateTicketRequest request)
+        {
+            var ticket = await _context.Tickets.FindAsync(id);
+            if (ticket == null)
+                return NotFound();
+
+            var role = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            var uid = userIdClaim != null ? int.Parse(userIdClaim) : 0;
+
+            if (role != "Administrador" && ticket.UsuarioId != uid)
+                return Forbid();
+
+            if (request.Calificacion < 1 || request.Calificacion > 5)
+                return BadRequest("Calificacion debe estar entre 1 y 5");
+
+            ticket.Calificacion = request.Calificacion;
+            ticket.FechaCalificacion = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+
             return NoContent();
         }
 

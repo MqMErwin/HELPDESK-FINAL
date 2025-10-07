@@ -1,0 +1,11 @@
+{
+  "watch": {
+    "exclude": [
+      "helpdesk.db",
+      "**/helpdesk.db",
+      "**/*.db-shm",
+      "**/*.db-wal"
+    ]
+  }
+}
+

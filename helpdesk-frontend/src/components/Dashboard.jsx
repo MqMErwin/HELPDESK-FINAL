@@ -24,8 +24,6 @@ export default function Dashboard({ role, token, onLogout }) {
     Tecnico: [
       { key: 'dashboard', label: 'Dashboard' },
       { key: 'assigned', label: 'Tickets asignados', component: <TicketList token={token} /> },
-      { key: 'new-report', label: 'Nuevo reporte', component: <TicketForm token={token} /> },
-      { key: 'history', label: 'Historial' },
       { key: 'settings', label: 'Configuración' }
     ],
     Solicitante: [

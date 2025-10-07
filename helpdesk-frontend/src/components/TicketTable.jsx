@@ -8,12 +8,16 @@ export default function TicketTable({ token }) {
 
   useEffect(() => {
     const fetchTickets = async () => {
-      const response = await fetch(`${API_URL}/tickets`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setTickets(data);
+      try {
+        const response = await fetch(`${API_URL}/tickets`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setTickets(data);
+        }
+      } catch (e) {
+        // noop
       }
     };
     fetchTickets();
@@ -21,13 +25,14 @@ export default function TicketTable({ token }) {
 
   return (
     <div>
-      <h2>Lista de Tickets</h2>
+      <h2 className="ticket-table-title">Lista de Tickets</h2>
       <table className="ticket-table">
         <thead>
           <tr>
             <th>ID</th>
-            <th>Título</th>
-            <th>Descripción</th>
+            <th>Titulo</th>
+            <th>Descripcion</th>
+            <th>Tecnico</th>
             <th>Estado</th>
           </tr>
         </thead>
@@ -37,6 +42,7 @@ export default function TicketTable({ token }) {
               <td>{t.id}</td>
               <td>{t.titulo}</td>
               <td>{t.descripcion}</td>
+              <td>{t.tecnico && t.tecnico.nombre ? t.tecnico.nombre : 'Sin asignar'}</td>
               <td>{t.estado}</td>
             </tr>
           ))}
@@ -45,3 +51,4 @@ export default function TicketTable({ token }) {
     </div>
   );
 }
+

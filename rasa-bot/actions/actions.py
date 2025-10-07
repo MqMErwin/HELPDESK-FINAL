@@ -5,6 +5,7 @@ from rasa_sdk.events import SlotSet
 from datetime import datetime
 import requests
 import os
+import re
 
 # Base de conocimiento de equipos válidos y su categoría
 EQUIPOS_VALIDOS = {
@@ -17,6 +18,32 @@ EQUIPOS_VALIDOS = {
     "aire acondicionado": "climatización",
     "software": "aplicación",
 }
+
+# Palabras clave para clasificación automática
+CATEGORIAS = {
+    "Hardware": [
+        "proyector", "cañón", "beam", "impresora", "computadora", "pc", "laptop",
+        "router", "switch", "servidor", "pantalla", "teclado", "mouse"
+    ],
+    "Software": [
+        "software", "windows", "office", "licencia", "programa", "aplicación",
+        "instalar", "actualiz", "se cierra", "error", "no abre"
+    ],
+    "Red": [
+        "internet", "wifi", "ethernet", "red", "conexión", "no conecta", "sin señal"
+    ],
+    "Acceso": [
+        "inicio de sesión", "autenticación", "contraseña", "password", "correo", "email", "bloqueo"
+    ]
+}
+
+def _clasificar_categoria(text: Text) -> Text:
+    t = (text or "").lower()
+    for cat, kws in CATEGORIAS.items():
+        for kw in kws:
+            if kw in t:
+                return cat
+    return "General"
 
 class ActionValidarProblema(Action):
     def name(self) -> Text:
@@ -85,13 +112,30 @@ class ActionCrearTicket(Action):
         ubicacion = tracker.get_slot("ubicacion") or "Ubicación no especificada"
         user_message = tracker.latest_message.get('text')
         sender_id = tracker.sender_id
+        categoria = tracker.get_slot("categoria") or _clasificar_categoria(user_message)
         
         api_url = os.getenv("HELPDESK_API_URL", "http://localhost:5131/api")
+
+        # Prevención de duplicados simple en ventana corta
+        ultimo_texto = tracker.get_slot("ultimo_ticket_texto")
+        is_duplicate = False
+        if ultimo_texto:
+            try:
+                def norm(s):
+                    return re.sub(r"\s+", " ", (s or "").lower()).strip()
+                is_duplicate = norm(ultimo_texto) == norm(user_message)
+            except Exception:
+                is_duplicate = False
+
+        if is_duplicate:
+            dispatcher.utter_message(
+                text="Ya registraste un reporte muy similar hace poco. Agregaré este mensaje como actualización."
+            )
 
         payload = {
             "ticketId": 0,
             "usuarioId": int(sender_id) if str(sender_id).isdigit() else 0,
-            "mensaje": user_message
+            "mensaje": f"[{categoria}] {user_message}"
         }
 
         try:
@@ -107,7 +151,10 @@ class ActionCrearTicket(Action):
             SlotSet("num_ticket", num_ticket),
             SlotSet("equipo", equipo),
             SlotSet("ubicacion", ubicacion),
-            SlotSet("fecha_actualizacion", datetime.now().strftime("%d/%m/%Y %H:%M"))
+            SlotSet("fecha_actualizacion", datetime.now().strftime("%d/%m/%Y %H:%M")),
+            SlotSet("categoria", categoria),
+            SlotSet("ultimo_ticket_texto", user_message),
+            SlotSet("ultimo_ticket_fecha", datetime.now().isoformat())
         ]
 
 class ActionConsultarEstado(Action):
@@ -154,6 +201,21 @@ class ActionResponderFAQ(Action):
         
         latest_message = tracker.latest_message.get('text').lower()
 
+        # FAQ dinámica opcional: si existe URL en entorno, intentar consultarla
+        faq_url = os.getenv("HELPDESK_FAQ_URL")
+        if faq_url:
+            try:
+                resp = requests.get(faq_url, timeout=3)
+                if resp.ok:
+                    data = resp.json()  # formato esperado: [{"keywords":[...],"answer":"..."}]
+                    for item in data:
+                        kws = [k.lower() for k in item.get("keywords", [])]
+                        if any(k in latest_message for k in kws):
+                            dispatcher.utter_message(text=item.get("answer", ""))
+                            return []
+            except Exception:
+                pass
+
         if "horario" in latest_message or "hora" in latest_message:
             dispatcher.utter_message(response="utter_faq_horarios")
         elif "modalidad" in latest_message or "admis" in latest_message:
@@ -186,3 +248,15 @@ class ActionResponderFAQ(Action):
             dispatcher.utter_message(response="utter_default")
 
         return []
+
+class ActionClasificarProblema(Action):
+    def name(self) -> Text:
+        return "action_clasificar_problema"
+
+    def run(self, dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        texto = tracker.latest_message.get('text')
+        categoria = _clasificar_categoria(texto)
+        dispatcher.utter_message(text=f"Detecté que tu consulta parece de tipo: {categoria}.")
+        return [SlotSet("categoria", categoria)]
