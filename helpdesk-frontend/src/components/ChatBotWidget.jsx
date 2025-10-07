@@ -6,9 +6,11 @@ export default function ChatBotWidget({ userId }) {
   const [selectedRole, setSelectedRole] = useState(null);
   const [currentFlow, setCurrentFlow] = useState(null); // 'login_issue' | 'device_issue' | 'notes_issue' | 'other_issue'
   const [awaitingOtherDescription, setAwaitingOtherDescription] = useState(false);
+  const [awaitingOtherTitle, setAwaitingOtherTitle] = useState(false);
   const [awaitingCreateConfirm, setAwaitingCreateConfirm] = useState(false);
   const [pendingTitle, setPendingTitle] = useState(null);
   const [pendingDescription, setPendingDescription] = useState(null);
+  const [pendingOtherTitle, setPendingOtherTitle] = useState(null);
   const [messages, setMessages] = useState([
     { text: '\u00a1Hola! Soy el asistente de soporte de la EMI Cochabamba.', sender: 'bot' },
     {
@@ -125,6 +127,7 @@ export default function ChatBotWidget({ userId }) {
     if (message === 'issue_login') {
       setCurrentFlow('login_issue');
       setAwaitingOtherDescription(false);
+      setAwaitingOtherTitle(false);
       setMessages((prev) => [
         ...prev,
         { text: 'Elige una opción para ayudarte con el inicio de sesión:', sender: 'bot', buttons: [
@@ -138,6 +141,7 @@ export default function ChatBotWidget({ userId }) {
     if (message === 'issue_device') {
       setCurrentFlow('device_issue');
       setAwaitingOtherDescription(false);
+      setAwaitingOtherTitle(false);
       setMessages((prev) => [
         ...prev,
         { text: 'Selecciona el problema del dispositivo:', sender: 'bot', buttons: [
@@ -152,6 +156,7 @@ export default function ChatBotWidget({ userId }) {
     if (message === 'issue_notes') {
       setCurrentFlow('notes_issue');
       setAwaitingOtherDescription(false);
+      setAwaitingOtherTitle(false);
       setMessages((prev) => [
         ...prev,
         { text: '¿Qué ocurre con el cargado de notas?', sender: 'bot', buttons: [
@@ -165,8 +170,13 @@ export default function ChatBotWidget({ userId }) {
     }
     if (message === 'issue_other') {
       setCurrentFlow('other_issue');
-      setAwaitingOtherDescription(true);
-      setMessages((prev) => [...prev, { text: 'Describe brevemente tu problema para crear el ticket.', sender: 'bot' }]);
+      setAwaitingOtherTitle(true);
+      setAwaitingOtherDescription(false);
+      setPendingOtherTitle(null);
+      setMessages((prev) => [
+        ...prev,
+        { text: '¿Cuál sería el título del problema?', sender: 'bot' }
+      ]);
       return;
     }
 
@@ -254,9 +264,19 @@ export default function ChatBotWidget({ userId }) {
     }
 
     if (currentFlow === 'other_issue') {
+      if (awaitingOtherTitle) {
+        setPendingOtherTitle(message);
+        setAwaitingOtherTitle(false);
+        setAwaitingOtherDescription(true);
+        setMessages((prev) => [...prev, { text: 'Gracias. Ahora describe brevemente el problema.', sender: 'bot' }]);
+        return;
+      }
       if (awaitingOtherDescription) {
-        await createTicket('Otro problema', message);
+        const titulo = pendingOtherTitle?.trim() ? pendingOtherTitle.trim() : 'Otro problema';
+        await createTicket(titulo, message);
         setAwaitingOtherDescription(false);
+        setPendingOtherTitle(null);
+        setAwaitingOtherTitle(false);
         setCurrentFlow(null);
         return;
       }
