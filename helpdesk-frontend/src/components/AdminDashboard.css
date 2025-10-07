@@ -1,4 +1,4 @@
-/* Estilos renovados para el panel de administración */
+/* Estilos renovados para el panel de administraciÃ³n */
 .admin-dashboard {
   --header-height: 74px;
   --sidebar-width: 260px;
@@ -73,21 +73,22 @@
 
 .admin-header h1 {
   display: flex;
-  align-items: baseline;
-  gap: 6px;
+  align-items: center;
+  gap: 12px;
   font-size: 1.6rem;
   font-weight: 700;
+  margin: 0;
 }
 
 .logo-part {
   color: #fff;
 }
 
-.logo-emi {
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.82);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+.emi-logo {
+  height: 34px;
+  width: auto;
+  display: block;
+  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.28));
 }
 
 .header-right {

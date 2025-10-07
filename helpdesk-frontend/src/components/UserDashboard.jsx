@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './AdminDashboard.css';
 import './UserDashboard.css';
+import emiLogo from '../assets/ESCUELA-MILITAR-DE-INGENIERIA.png';
 import TicketForm from './TicketForm';
 import TicketList from './TicketList.jsx';
 import {
@@ -78,9 +79,9 @@ export default function UserDashboard({ onLogout, token, role }) {
           <button className="menu-toggle" onClick={() => setSidebarOpen(!sidebarOpen)}>
             {sidebarOpen ? <FiX /> : <FiMenu />}
           </button>
-          <h1>
+          <h1 className="app-logo">
             <span className="logo-part">HelpDesk</span>
-            <span className="logo-emi">EMI</span>
+            <img src={emiLogo} alt="Logo EMI" className="emi-logo" />
           </h1>
         </div>
 
