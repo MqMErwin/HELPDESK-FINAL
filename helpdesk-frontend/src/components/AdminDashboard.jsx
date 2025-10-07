@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 
 import './AdminDashboard.css';
+import emiLogo from '../assets/ESCUELA-MILITAR-DE-INGENIERIA.png';
 
 import {
 
@@ -270,11 +271,11 @@ export default function AdminDashboard({ onLogout, token, role }) {
 
           </button>
 
-          <h1>
+          <h1 className="app-logo">
 
             <span className="logo-part">HelpDesk</span>
 
-            <span className="logo-emi">EMI</span>
+            <img src={emiLogo} alt="Logo EMI" className="emi-logo" />
 
           </h1>
 
