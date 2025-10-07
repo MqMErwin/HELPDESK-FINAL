@@ -308,8 +308,15 @@ export default function ChatBotWidget({ userId }) {
 
   return (
     <div className={`chatbot-widget ${isOpen ? 'open' : ''}`}>
-      <button className="chatbot-button" onClick={handleToggle}>
-        {isOpen ? 'Cerrar' : 'Chat'}
+      <button
+        className={`chatbot-button ${isOpen ? 'open' : ''}`}
+        onClick={handleToggle}
+        aria-label={isOpen ? 'Cerrar asistente virtual' : 'Abrir asistente virtual'}
+      >
+        <span className="chatbot-button__icon" aria-hidden="true">
+          {isOpen ? '✕' : '💬'}
+        </span>
+        <span className="chatbot-button__text">{isOpen ? 'Cerrar' : 'Hablar con EMI'}</span>
       </button>
 
       {isOpen && (
@@ -319,7 +326,6 @@ export default function ChatBotWidget({ userId }) {
               <span className="chatbot-header__title">Asistente EMI</span>
               <span className="chatbot-header__subtitle">Soporte Cochabamba</span>
             </div>
-            <button className="chatbot-header__close" onClick={handleToggle}>Cerrar</button>
           </div>
 
           <div className="chatbot-messages">
